@@ -1,0 +1,1148 @@
+<!DOCTYPE html>
+
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>우리집 차 어디있지? 🚗</title>
+    <meta name="theme-color" content="#2563eb">
+    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuyasOumrOynkSDssKgg7Ja064Ks7J20KeyngCIsCiAgInNob3J0X25hbWUiOiAi7LC47LC07Ja064Ks7J20KeyngCIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgInRoZW1lX2NvbG9yIjogIiMyNTYzZWIiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiNmOWZhZmIiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUJ0YVc1bGMyNTFZbUpzWlNBOUlqQXVOU0lnZEdoelpXMWxQU0poWlRCNVlpSWdZblV5Y25sdVluZ3pPeXhtTFM4K1BDOXFNREF4Y2lCdGFHNXFaVzQ5SWpBdU5TSWdWa2RNVmlBOUpqQWdjM1JzWjJWa2RqRWlMRzlwWkdGMVkyOWtSMkZrTG5BMElqMGdQRE5tTTJOa01EWTZRRTV6YWpFaWNpQTlJamt1TmpRZ0xFVnNJbVJpUXlJOUltbHZjSFJ6Y0c4eVpXOTRJakFnSWlCaWVuVmJOVEE5SW1SOXV2VDRIOU4xN0VDbWFnTzZWOWg3TTlIUUlIdDlhVURvNVdrZDVYSkJEcEppSlVLS3hOZzZHZ2xTaGl5ZzFPU2xHSjZDVWNkZUJiMUx3QUVDNnFuNGZxTlZrQWJsU0NraHdKb3BJcC9FLzhEK0lNcG9mU3VKR25FZnl1VnBUV2I4aGdVOXJGZWtSM21Ybl0iLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+
+```
+<!-- Firebase SDK - 최신 안정 버전 -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+    }
+
+    .container {
+        max-width: 414px;
+        margin: 0 auto;
+        background: #f9fafb;
+        min-height: 100vh;
+        overflow-x: hidden;
+    }
+
+    .header {
+        background: linear-gradient(135deg, #2563eb, #3b82f6);
+        color: white;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 5px;
+    }
+
+    .header p {
+        opacity: 0.9;
+        font-size: 0.9rem;
+    }
+
+    .connection-status {
+        padding: 10px 20px;
+        font-size: 0.8rem;
+        text-align: center;
+    }
+
+    .status-connected {
+        background: #10b981;
+        color: white;
+    }
+
+    .status-disconnected {
+        background: #ef4444;
+        color: white;
+    }
+
+    .status-local {
+        background: #f59e0b;
+        color: white;
+    }
+
+    .main-content {
+        padding: 20px;
+    }
+
+    .login-section {
+        background: white;
+        border-radius: 12px;
+        padding: 30px 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .login-section h2 {
+        margin-bottom: 20px;
+        color: #1f2937;
+    }
+
+    .login-tabs {
+        display: flex;
+        margin-bottom: 20px;
+        background: #f3f4f6;
+        border-radius: 8px;
+        padding: 4px;
+    }
+
+    .login-tab {
+        flex: 1;
+        padding: 10px;
+        background: transparent;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .login-tab.active {
+        background: white;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        font-weight: bold;
+    }
+
+    .car-list {
+        margin-bottom: 30px;
+    }
+
+    .car-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: transform 0.2s;
+    }
+
+    .car-card:hover {
+        transform: translateY(-2px);
+    }
+
+    .car-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .car-name {
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #1f2937;
+    }
+
+    .car-status {
+        font-size: 0.8rem;
+        padding: 4px 8px;
+        border-radius: 20px;
+        background: #ecfdf5;
+        color: #065f46;
+    }
+
+    .parking-info {
+        background: #f3f4f6;
+        padding: 15px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+
+    .location-text {
+        font-size: 1.1rem;
+        color: #374151;
+        margin-bottom: 5px;
+    }
+
+    .update-time {
+        font-size: 0.8rem;
+        color: #6b7280;
+    }
+
+    .updated-by {
+        font-size: 0.8rem;
+        color: #9ca3af;
+        font-style: italic;
+    }
+
+    .no-location {
+        color: #9ca3af;
+        font-style: italic;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 10px;
+    }
+
+    .btn {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-primary {
+        background: #2563eb;
+        color: white;
+    }
+
+    .btn-primary:hover {
+        background: #1d4ed8;
+    }
+
+    .btn-secondary {
+        background: #f3f4f6;
+        color: #374151;
+    }
+
+    .btn-secondary:hover {
+        background: #e5e7eb;
+    }
+
+    .btn-danger {
+        background: #ef4444;
+        color: white;
+    }
+
+    .btn-danger:hover {
+        background: #dc2626;
+    }
+
+    .add-car-btn {
+        width: 100%;
+        padding: 15px;
+        background: #10b981;
+        color: white;
+        border: none;
+        border-radius: 12px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        margin-bottom: 20px;
+    }
+
+    .add-car-btn:hover {
+        background: #059669;
+    }
+
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0,0,0,0.5);
+        z-index: 1000;
+    }
+
+    .modal-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: white;
+        padding: 30px;
+        border-radius: 12px;
+        width: 90%;
+        max-width: 400px;
+    }
+
+    .modal h2 {
+        margin-bottom: 20px;
+        text-align: center;
+        color: #1f2937;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #374151;
+    }
+
+    .form-group input,
+    .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #d1d5db;
+        border-radius: 8px;
+        font-size: 1rem;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .modal-buttons {
+        display: flex;
+        gap: 10px;
+        margin-top: 20px;
+    }
+
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 20px;
+        background: #10b981;
+        color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        transform: translateX(300px);
+        transition: transform 0.3s;
+        z-index: 1001;
+    }
+
+    .notification.show {
+        transform: translateX(0);
+    }
+
+    .notification.error {
+        background: #ef4444;
+    }
+
+    .settings {
+        margin-top: 30px;
+        padding-top: 20px;
+        border-top: 1px solid #e5e7eb;
+    }
+
+    .settings h3 {
+        color: #374151;
+        margin-bottom: 15px;
+    }
+
+    .setting-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px 0;
+        border-bottom: 1px solid #f3f4f6;
+    }
+
+    .toggle {
+        position: relative;
+        width: 50px;
+        height: 24px;
+        background: #d1d5db;
+        border-radius: 24px;
+        cursor: pointer;
+        transition: background 0.3s;
+    }
+
+    .toggle.active {
+        background: #10b981;
+    }
+
+    .toggle::after {
+        content: '';
+        position: absolute;
+        top: 2px;
+        left: 2px;
+        width: 20px;
+        height: 20px;
+        background: white;
+        border-radius: 50%;
+        transition: left 0.3s;
+    }
+
+    .toggle.active::after {
+        left: 28px;
+    }
+
+    .share-info {
+        background: #eff6ff;
+        border: 1px solid #bfdbfe;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+
+    .share-code {
+        font-family: monospace;
+        font-size: 1.2rem;
+        font-weight: bold;
+        color: #1d4ed8;
+        background: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        margin: 8px 0;
+        display: inline-block;
+    }
+
+    .input-group {
+        display: flex;
+        gap: 8px;
+    }
+
+    .input-group input {
+        flex: 1;
+    }
+
+    .input-group button {
+        padding: 12px 16px;
+        background: #2563eb;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .logout-section {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .btn-logout {
+        background: #6b7280;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+    }
+</style>
+```
+
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🚗 우리집 차 어디있지?</h1>
+            <p>주차 위치를 가족과 실시간 공유하세요</p>
+        </header>
+
+```
+    <div class="connection-status" id="connectionStatus">
+        🔌 연결 상태 확인 중...
+    </div>
+
+    <main class="main-content">
+        <!-- 로그인/회원가입 섹션 -->
+        <div class="login-section" id="loginSection">
+            <h2>🔑 그룹 접속</h2>
+            
+            <div class="login-tabs">
+                <button class="login-tab active" onclick="switchTab('join')">참여하기</button>
+                <button class="login-tab" onclick="switchTab('create')">새로 만들기</button>
+            </div>
+
+            <!-- 참여하기 폼 -->
+            <div id="joinForm">
+                <div class="form-group">
+                    <label for="joinCode">공유 코드</label>
+                    <input type="text" id="joinCode" placeholder="공유 코드를 입력하세요" style="text-transform: uppercase;">
+                </div>
+                <div class="form-group">
+                    <label for="joinPassword">비밀번호</label>
+                    <input type="password" id="joinPassword" placeholder="비밀번호를 입력하세요">
+                </div>
+                <div class="form-group">
+                    <label for="joinNickname">내 이름</label>
+                    <input type="text" id="joinNickname" placeholder="가족들이 알아볼 이름" maxlength="10">
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="joinGroup()">
+                    그룹 참여하기
+                </button>
+            </div>
+
+            <!-- 새로 만들기 폼 -->
+            <div id="createForm" style="display: none;">
+                <div class="form-group">
+                    <label for="createPassword">비밀번호 설정</label>
+                    <input type="password" id="createPassword" placeholder="그룹 비밀번호를 설정하세요">
+                </div>
+                <div class="form-group">
+                    <label for="createNickname">내 이름</label>
+                    <input type="text" id="createNickname" placeholder="가족들이 알아볼 이름" maxlength="10">
+                </div>
+                <button class="btn btn-primary" style="width: 100%; margin-top: 10px;" onclick="createGroup()">
+                    새 그룹 만들기
+                </button>
+            </div>
+        </div>
+
+        <!-- 메인 앱 섹션 -->
+        <div class="app-section" id="appSection" style="display: none;">
+            <!-- 공유 정보 -->
+            <div class="share-info" id="shareInfo">
+                <div>🔗 그룹 공유 정보</div>
+                <div class="share-code" id="displayShareCode">LOADING...</div>
+                <div style="font-size: 0.9rem; color: #6b7280;">이 코드와 비밀번호를 가족에게 공유하세요</div>
+            </div>
+
+            <button class="add-car-btn" onclick="showAddCarModal()">
+                ➕ 새 차량 추가
+            </button>
+
+            <div class="car-list" id="carList">
+                <!-- 차량 카드들이 여기에 동적으로 추가됩니다 -->
+            </div>
+
+            <div class="settings">
+                <h3>⚙️ 설정</h3>
+                <div class="setting-item">
+                    <div>
+                        <div style="font-weight: bold;">자동 알림</div>
+                        <div style="font-size: 0.8rem; color: #6b7280;">밤 9시에 주차 위치 업데이트 알림</div>
+                    </div>
+                    <div class="toggle" id="notificationToggle" onclick="toggleNotification()"></div>
+                </div>
+            </div>
+
+            <div class="logout-section">
+                <button class="btn-logout" onclick="logout()">그룹 나가기</button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- 차량 추가 모달 -->
+<div class="modal" id="addCarModal">
+    <div class="modal-content">
+        <h2>새 차량 추가</h2>
+        <div class="form-group">
+            <label for="carName">차량 이름 (모델명 또는 애칭)</label>
+            <input type="text" id="carName" placeholder="예: 소나타, 우리집 차" />
+        </div>
+        <div class="modal-buttons">
+            <button class="btn btn-secondary" onclick="hideAddCarModal()">취소</button>
+            <button class="btn btn-primary" onclick="addCar()">추가</button>
+        </div>
+    </div>
+</div>
+
+<!-- 주차 위치 업데이트 모달 -->
+<div class="modal" id="updateLocationModal">
+    <div class="modal-content">
+        <h2 id="updateModalTitle">주차 위치 업데이트</h2>
+        <div class="form-group">
+            <label for="floor">주차 층</label>
+            <select id="floor">
+                <option value="">층 선택</option>
+                <option value="B3">지하 3층</option>
+                <option value="B2">지하 2층</option>
+                <option value="B1">지하 1층</option>
+                <option value="1F">1층</option>
+                <option value="2F">2층</option>
+                <option value="3F">3층</option>
+                <option value="4F">4층</option>
+                <option value="5F">5층</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="section">구역/위치</label>
+            <input type="text" id="section" placeholder="예: A-15, 여성주차장, 전기차구역, 출구 앞" />
+        </div>
+        <div class="modal-buttons">
+            <button class="btn btn-secondary" onclick="hideUpdateModal()">취소</button>
+            <button class="btn btn-primary" onclick="updateLocation()">업데이트</button>
+        </div>
+    </div>
+</div>
+
+<!-- 알림 -->
+<div class="notification" id="notification"></div>
+
+<script>
+    // Firebase 설정
+    const firebaseConfig = {
+        apiKey: "AIzaSyDVoA4aRmhrwcDeU4qT9ZWBvLGdecYEwk4",
+        authDomain: "car-parking-app-8aec7.firebaseapp.com",
+        databaseURL: "https://car-parking-app-8aec7-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "car-parking-app-8aec7",
+        storageBucket: "car-parking-app-8aec7.firebasestorage.app",
+        messagingSenderId: "439284952071",
+        appId: "1:439284952071:web:f101098f0c3ccf700f4ea2"
+    };
+
+    // Firebase 초기화 시도
+    let database;
+    let isOnline = false;
+    
+    // Firebase SDK 로드 확인
+    function initFirebase() {
+        console.log('🔄 Firebase 초기화 시도...');
+        console.log('Firebase 객체:', typeof firebase);
+        
+        if (typeof firebase === 'undefined') {
+            console.error('❌ Firebase SDK가 로드되지 않았습니다');
+            isOnline = false;
+            updateConnectionStatus('offline');
+            return;
+        }
+        
+        try {
+            // Firebase 초기화
+            console.log('📡 Firebase 설정:', firebaseConfig);
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            console.log('✅ Firebase 초기화 완료');
+            
+            // 데이터베이스 연결 테스트
+            database.ref('.info/connected').on('value', (snapshot) => {
+                if (snapshot.val() === true) {
+                    console.log('🟢 Firebase 실시간 연결됨');
+                    isOnline = true;
+                    updateConnectionStatus('online');
+                } else {
+                    console.log('🟡 Firebase 연결 끊김');
+                    isOnline = false;
+                    updateConnectionStatus('offline');
+                }
+            });
+            
+            console.log('✅ Firebase 연결 성공!');
+            
+        } catch (error) {
+            console.error('❌ Firebase 연결 실패:', error.message);
+            console.error('상세 에러:', error);
+            isOnline = false;
+            updateConnectionStatus('offline');
+        }
+    }
+    
+    // Firebase SDK가 로드된 후 초기화
+    window.addEventListener('load', () => {
+        setTimeout(initFirebase, 100); // 약간의 딜레이 후 초기화
+    });
+
+    // 로컬 스토리지 키
+    const STORAGE_KEY = 'carParkingApp';
+    
+    // 전역 변수
+    let cars = [];
+    let currentCarId = null;
+    let notificationEnabled = false;
+    let currentGroup = null;
+    let userNickname = '';
+
+    // 초기화
+    document.addEventListener('DOMContentLoaded', function() {
+        checkExistingSession();
+        scheduleNotifications();
+    });
+
+    // 기존 세션 확인
+    function checkExistingSession() {
+        const data = localStorage.getItem(STORAGE_KEY);
+        if (data) {
+            const parsed = JSON.parse(data);
+            if (parsed.currentGroup && parsed.userNickname) {
+                currentGroup = parsed.currentGroup;
+                userNickname = parsed.userNickname;
+                notificationEnabled = parsed.notificationEnabled || false;
+                document.getElementById('notificationToggle').classList.toggle('active', notificationEnabled);
+                
+                showAppSection();
+                if (isOnline) {
+                    loadGroupData();
+                } else {
+                    cars = parsed.cars || [];
+                    renderCarList();
+                }
+                return;
+            }
+        }
+        showLoginSection();
+    }
+
+    // 연결 상태 업데이트
+    function updateConnectionStatus(status) {
+        const statusElement = document.getElementById('connectionStatus');
+        if (status === 'online') {
+            statusElement.innerHTML = '🟢 실시간 동기화 활성화';
+            statusElement.className = 'connection-status status-connected';
+            isOnline = true;
+        } else {
+            statusElement.innerHTML = '🟡 로컬 모드 (동기화 불가)';
+            statusElement.className = 'connection-status status-local';
+            isOnline = false;
+        }
+    }
+
+    // 탭 전환
+    function switchTab(tab) {
+        const joinTab = document.querySelector('.login-tab:first-child');
+        const createTab = document.querySelector('.login-tab:last-child');
+        const joinForm = document.getElementById('joinForm');
+        const createForm = document.getElementById('createForm');
+
+        if (tab === 'join') {
+            joinTab.classList.add('active');
+            createTab.classList.remove('active');
+            joinForm.style.display = 'block';
+            createForm.style.display = 'none';
+        } else {
+            joinTab.classList.remove('active');
+            createTab.classList.add('active');
+            joinForm.style.display = 'none';
+            createForm.style.display = 'block';
+        }
+    }
+
+    // 새 그룹 만들기
+    async function createGroup() {
+        const password = document.getElementById('createPassword').value.trim();
+        const nickname = document.getElementById('createNickname').value.trim();
+
+        if (!password || !nickname) {
+            showNotification('비밀번호와 이름을 모두 입력해주세요', 'error');
+            return;
+        }
+
+        const groupCode = generateGroupCode();
+        currentGroup = { code: groupCode, password: password };
+        userNickname = nickname;
+
+        if (isOnline) {
+            try {
+                // Firebase에 그룹 생성
+                await database.ref(`groups/${groupCode}`).set({
+                    password: password,
+                    createdAt: Date.now(),
+                    cars: {},
+                    members: {
+                        [generateUserId()]: {
+                            nickname: nickname,
+                            joinedAt: Date.now()
+                        }
+                    }
+                });
+                showNotification('새 그룹이 생성되었습니다!');
+            } catch (error) {
+                showNotification('그룹 생성 실패: ' + error.message, 'error');
+                return;
+            }
+        }
+
+        saveLocalData();
+        showAppSection();
+    }
+
+    // 그룹 참여하기
+    async function joinGroup() {
+        const code = document.getElementById('joinCode').value.trim().toUpperCase();
+        const password = document.getElementById('joinPassword').value.trim();
+        const nickname = document.getElementById('joinNickname').value.trim();
+
+        if (!code || !password || !nickname) {
+            showNotification('모든 필드를 입력해주세요', 'error');
+            return;
+        }
+
+        if (isOnline) {
+            try {
+                // Firebase에서 그룹 확인
+                const groupSnapshot = await database.ref(`groups/${code}`).once('value');
+                const groupData = groupSnapshot.val();
+
+                if (!groupData) {
+                    showNotification('존재하지 않는 그룹 코드입니다', 'error');
+                    return;
+                }
+
+                if (groupData.password !== password) {
+                    showNotification('비밀번호가 틀렸습니다', 'error');
+                    return;
+                }
+
+                // 그룹에 멤버 추가
+                const userId = generateUserId();
+                await database.ref(`groups/${code}/members/${userId}`).set({
+                    nickname: nickname,
+                    joinedAt: Date.now()
+                });
+
+                showNotification(`${code} 그룹에 참여했습니다!`);
+            } catch (error) {
+                showNotification('그룹 참여 실패: ' + error.message, 'error');
+                return;
+            }
+        } else {
+            // 로컬 모드에서는 항상 성공
+            showNotification('로컬 모드로 그룹에 참여했습니다', 'error');
+        }
+
+        currentGroup = { code: code, password: password };
+        userNickname = nickname;
+        saveLocalData();
+        showAppSection();
+        
+        if (isOnline) {
+            loadGroupData();
+        }
+    }
+
+    // 앱 섹션 표시
+    function showAppSection() {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('appSection').style.display = 'block';
+        document.getElementById('displayShareCode').textContent = currentGroup.code;
+        
+        if (isOnline) {
+            updateConnectionStatus('online');
+        } else {
+            updateConnectionStatus('offline');
+        }
+    }
+
+    // 로그인 섹션 표시
+    function showLoginSection() {
+        document.getElementById('loginSection').style.display = 'block';
+        document.getElementById('appSection').style.display = 'none';
+    }
+
+    // 로그아웃
+    function logout() {
+        if (confirm('정말 그룹에서 나가시겠어요?')) {
+            currentGroup = null;
+            userNickname = '';
+            cars = [];
+            localStorage.removeItem(STORAGE_KEY);
+            showLoginSection();
+            showNotification('그룹에서 나갔습니다');
+        }
+    }
+
+    // 그룹 데이터 로드
+    function loadGroupData() {
+        if (!isOnline || !currentGroup) return;
+
+        database.ref(`groups/${currentGroup.code}/cars`).on('value', (snapshot) => {
+            const data = snapshot.val();
+            cars = data ? Object.keys(data).map(key => ({
+                id: key,
+                ...data[key]
+            })) : [];
+            renderCarList();
+        });
+    }
+
+    // 로컬 데이터 저장
+    function saveLocalData() {
+        const data = {
+            currentGroup: currentGroup,
+            userNickname: userNickname,
+            notificationEnabled: notificationEnabled,
+            cars: cars
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    // 온라인 데이터 저장
+    async function saveOnlineData() {
+        if (!isOnline || !currentGroup) {
+            saveLocalData();
+            return;
+        }
+
+        try {
+            const carsData = {};
+            cars.forEach(car => {
+                carsData[car.id] = {
+                    name: car.name,
+                    location: car.location,
+                    lastUpdated: car.lastUpdated,
+                    updatedBy: car.updatedBy
+                };
+            });
+
+            await database.ref(`groups/${currentGroup.code}/cars`).set(carsData);
+            saveLocalData();
+        } catch (error) {
+            showNotification('동기화 실패: ' + error.message, 'error');
+            saveLocalData(); // 로컬에는 저장
+        }
+    }
+
+    // 차량 목록 렌더링
+    function renderCarList() {
+        const carList = document.getElementById('carList');
+        carList.innerHTML = '';
+
+        if (cars.length === 0) {
+            carList.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #6b7280;">
+                    <div style="font-size: 3rem; margin-bottom: 10px;">🚗</div>
+                    <div>아직 등록된 차량이 없어요</div>
+                    <div style="font-size: 0.9rem; margin-top: 5px;">새 차량 추가 버튼을 눌러주세요</div>
+                </div>
+            `;
+            return;
+        }
+
+        cars.forEach(car => {
+            const timeAgo = car.lastUpdated ? getTimeAgo(car.lastUpdated) : null;
+            
+            const carCard = document.createElement('div');
+            carCard.className = 'car-card';
+            carCard.innerHTML = `
+                <div class="car-header">
+                    <div class="car-name">${car.name}</div>
+                    <div class="car-status">${car.location ? '위치 있음' : '위치 없음'}</div>
+                </div>
+                <div class="parking-info">
+                    ${car.location ? 
+                        `<div class="location-text">${car.location}</div>` + 
+                        (timeAgo ? `<div class="update-time">${timeAgo} 업데이트</div>` : '') +
+                        (car.updatedBy ? `<div class="updated-by">by ${car.updatedBy}</div>` : '') :
+                        '<div class="no-location">주차 위치가 등록되지 않았어요</div>'
+                    }
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="showUpdateModal('${car.id}')">
+                        위치 ${car.location ? '수정' : '등록'}
+                    </button>
+                    <button class="btn btn-secondary" onclick="deleteCar('${car.id}')">
+                        삭제
+                    </button>
+                </div>
+            `;
+            carList.appendChild(carCard);
+        });
+    }
+
+    // 시간 계산 유틸리티
+    function getTimeAgo(timestamp) {
+        const now = new Date();
+        const updateTime = new Date(timestamp);
+        const diffInMinutes = Math.floor((now - updateTime) / (1000 * 60));
+        
+        if (diffInMinutes < 1) return '방금 전';
+        if (diffInMinutes < 60) return `${diffInMinutes}분 전`;
+        if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}시간 전`;
+        return `${Math.floor(diffInMinutes / 1440)}일 전`;
+    }
+
+    // 유틸리티 함수들
+    function generateGroupCode() {
+        return Math.random().toString(36).substr(2, 6).toUpperCase();
+    }
+
+    function generateUserId() {
+        return Math.random().toString(36).substr(2, 9);
+    }
+
+    // 차량 추가 모달 표시
+    function showAddCarModal() {
+        document.getElementById('addCarModal').style.display = 'block';
+        document.getElementById('carName').focus();
+    }
+
+    // 차량 추가 모달 숨김
+    function hideAddCarModal() {
+        document.getElementById('addCarModal').style.display = 'none';
+        document.getElementById('carName').value = '';
+    }
+
+    // 차량 추가
+    function addCar() {
+        const carName = document.getElementById('carName').value.trim();
+        if (!carName) {
+            showNotification('차량 이름을 입력해주세요', 'error');
+            return;
+        }
+
+        const newCar = {
+            id: Date.now().toString(),
+            name: carName,
+            location: null,
+            lastUpdated: null,
+            updatedBy: null
+        };
+
+        cars.push(newCar);
+        saveOnlineData();
+        hideAddCarModal();
+        showNotification('차량이 추가되었습니다!');
+    }
+
+    // 위치 업데이트 모달 표시
+    function showUpdateModal(carId) {
+        currentCarId = carId;
+        const car = cars.find(c => c.id === carId);
+        if (!car) return;
+
+        document.getElementById('updateModalTitle').textContent = `${car.name} 주차 위치`;
+        document.getElementById('updateLocationModal').style.display = 'block';
+        
+        // 기존 위치 정보가 있으면 폼에 미리 채우기
+        if (car.location) {
+            const [floor, section] = car.location.split(' - ');
+            document.getElementById('floor').value = floor || '';
+            document.getElementById('section').value = section || '';
+        }
+    }
+
+    // 위치 업데이트 모달 숨김
+    function hideUpdateModal() {
+        document.getElementById('updateLocationModal').style.display = 'none';
+        document.getElementById('floor').value = '';
+        document.getElementById('section').value = '';
+        currentCarId = null;
+    }
+
+    // 위치 업데이트
+    function updateLocation() {
+        if (!currentCarId) return;
+
+        const floor = document.getElementById('floor').value;
+        const section = document.getElementById('section').value.trim();
+
+        if (!floor || !section) {
+            showNotification('층과 구역을 모두 입력해주세요', 'error');
+            return;
+        }
+
+        const car = cars.find(c => c.id === currentCarId);
+        if (car) {
+            car.location = `${floor} - ${section}`;
+            car.lastUpdated = new Date().toISOString();
+            car.updatedBy = userNickname;
+            
+            saveOnlineData();
+            hideUpdateModal();
+            showNotification('주차 위치가 업데이트되었습니다!');
+        }
+    }
+
+    // 차량 삭제
+    function deleteCar(carId) {
+        if (confirm('정말 이 차량을 삭제하시겠어요?')) {
+            cars = cars.filter(c => c.id !== carId);
+            saveOnlineData();
+            showNotification('차량이 삭제되었습니다');
+        }
+    }
+
+    // 알림 토글
+    function toggleNotification() {
+        notificationEnabled = !notificationEnabled;
+        document.getElementById('notificationToggle').classList.toggle('active', notificationEnabled);
+        saveLocalData();
+        
+        if (notificationEnabled) {
+            requestNotificationPermission();
+            showNotification('알림이 활성화되었습니다');
+        } else {
+            showNotification('알림이 비활성화되었습니다');
+        }
+    }
+
+    // 나머지 함수들은 이전과 동일...
+    function checkNotificationPermission() {
+        if ('Notification' in window && Notification.permission === 'granted') {
+            // 권한이 있음
+        } else if ('Notification' in window && Notification.permission !== 'denied') {
+            // 권한 요청 가능
+        }
+    }
+
+    function requestNotificationPermission() {
+        if ('Notification' in window) {
+            Notification.requestPermission().then(function(permission) {
+                if (permission === 'granted') {
+                    showNotification('알림 권한이 허용되었습니다');
+                }
+            });
+        }
+    }
+
+    function scheduleNotifications() {
+        if (!notificationEnabled) return;
+
+        const now = new Date();
+        const scheduledTime = new Date();
+        scheduledTime.setHours(21, 0, 0, 0);
+
+        if (now > scheduledTime) {
+            scheduledTime.setDate(scheduledTime.getDate() + 1);
+        }
+
+        const timeUntilNotification = scheduledTime - now;
+
+        setTimeout(() => {
+            if (notificationEnabled && 'Notification' in window && Notification.permission === 'granted') {
+                new Notification('🚗 우리집 차 어디있지?', {
+                    body: '오늘 주차한 위치를 업데이트해주세요!',
+                    icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTEgMTJIMjNWMTRIMVYxMloiIGZpbGw9IiMyNTYzRUIiLz4KPC9zdmc+'
+                });
+            }
+            
+            setTimeout(scheduleNotifications, 24 * 60 * 60 * 1000);
+        }, timeUntilNotification);
+    }
+
+    function showNotification(message, type = 'success') {
+        const notification = document.getElementById('notification');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.classList.add('show');
+
+        setTimeout(() => {
+            notification.classList.remove('show');
+        }, 3000);
+    }
+
+    // 이벤트 리스너들
+    window.addEventListener('click', function(event) {
+        const addModal = document.getElementById('addCarModal');
+        const updateModal = document.getElementById('updateLocationModal');
+        
+        if (event.target === addModal) {
+            hideAddCarModal();
+        }
+        if (event.target === updateModal) {
+            hideUpdateModal();
+        }
+    });
+
+    document.addEventListener('keypress', function(event) {
+        if (event.key === 'Enter') {
+            const addModal = document.getElementById('addCarModal');
+            const updateModal = document.getElementById('updateLocationModal');
+            
+            if (addModal.style.display === 'block') {
+                addCar();
+            } else if (updateModal.style.display === 'block') {
+                updateLocation();
+            }
+        }
+    });
+
+    // 자동 대문자 변환
+    document.getElementById('joinCode').addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase();
+    });
+</script>
+```
+
+</body>
+</html>
