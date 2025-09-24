@@ -18,6 +18,28 @@
         margin: 0;
         padding: 0;
         box-sizing: border-box;
+        /* Safari 모든 요소 점선 제거 */
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        outline: none !important;
+        border: none !important;
+    }
+
+    /* Safari 스크롤바 및 점선 표시 완전 제거 */
+    ::-webkit-scrollbar {
+        display: none !important;
+        width: 0 !important;
+        height: 0 !important;
+        background: transparent !important;
+    }
+
+    html, body {
+        overscroll-behavior: none;
+        -webkit-appearance: none;
+        border: none !important;
+        outline: none !important;
+        overflow-x: hidden;
     }
 
     body {
@@ -27,6 +49,10 @@
         color: #333;
         -webkit-user-select: none;
         -webkit-touch-callout: none;
+        /* Safari 점선 표시 완전 제거 */
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch;
+        position: relative;
     }
 
     .container {
@@ -34,7 +60,13 @@
         margin: 0 auto;
         background: #f9fafb;
         min-height: 100vh;
-        overflow-x: hidden;
+        overflow: hidden;
+        /* Safari 점선 제거 핵심 */
+        border: none !important;
+        outline: none !important;
+        -webkit-box-shadow: none !important;
+        box-shadow: none !important;
+        position: relative;
     }
 
     .header {
@@ -73,6 +105,7 @@
 
     .main-content {
         padding: 20px;
+        overflow: hidden;
     }
 
     .login-section {
