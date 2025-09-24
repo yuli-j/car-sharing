@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>우리집 차 어디있지? 🚗</title>
     <meta name="theme-color" content="#2563eb">
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIuyasOumrOynkSDssKgg7Ja064Ks7J20KeyngCIsCiAgInNob3J0X25hbWUiOiAi7LC47LC07Ja064Ks7J20KeyngCIsCiAgImRpc3BsYXkiOiAic3RhbmRhbG9uZSIsCiAgInN0YXJ0X3VybCI6ICIuLyIsCiAgInRoZW1lX2NvbG9yIjogIiMyNTYzZWIiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiNmOWZhZmIiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJkYXRhOmltYWdlL3N2Zyt4bWw7YmFzZTY0LFBITjJaeUJ0YVc1bGMyNTFZbUpzWlNBOUlqQXVOU0lnZEdoelpXMWxQU0poWlRCNVlpSWdZblV5Y25sdVluZ3pPeXhtTFM4K1BDOXFNREF4Y2lCdGFHNXFaVzQ5SWpBdU5TSWdWa2RNVmlBOUpqQWdjM1JzWjJWa2RqRWlMRzlwWkdGMVkyOWtSMkZrTG5BMElqMGdQRE5tTTJOa01EWTZRRTV6YWpFaWNpQTlJamt1TmpRZ0xFVnNJbVJpUXlJOUltbHZjSFJ6Y0c4eVpXOTRJakFnSWlCaWVuVmJOVEE5SW1SOXV2VDRIOU4xN0VDbWFnTzZWOWg3TTlIUUlIdDlhVURvNVdrZDVYSkJEcEppSlVLS3hOZzZHZ2xTaGl5ZzFPU2xHSjZDVWNkZUJiMUx3QUVDNnFuNGZxTlZrQWJsU0NraHdKb3BJcC9FLzhEK0lNcG9mU3VKR25FZnl1VnBUV2I4aGdVOXJGZWtSM21Ybl0iLAogICAgICAic2l6ZXMiOiAiMTkyeDE5MiIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="우리집 차 어디있지?">
+    <link rel="apple-touch-icon" sizes="192x192" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3E%3Crect width='192' height='192' fill='%232563eb'/%3E%3Ctext x='96' y='130' font-size='80' fill='white' text-anchor='middle'%3E🚗%3C/text%3E%3C/svg%3E">
 
 ```
-<!-- Firebase SDK - 최신 안정 버전 -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <style>
     * {
         margin: 0;
@@ -25,6 +25,8 @@
         background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         min-height: 100vh;
         color: #333;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
     }
 
     .container {
@@ -61,11 +63,6 @@
 
     .status-connected {
         background: #10b981;
-        color: white;
-    }
-
-    .status-disconnected {
-        background: #ef4444;
         color: white;
     }
 
@@ -214,15 +211,6 @@
 
     .btn-secondary:hover {
         background: #e5e7eb;
-    }
-
-    .btn-danger {
-        background: #ef4444;
-        color: white;
-    }
-
-    .btn-danger:hover {
-        background: #dc2626;
     }
 
     .add-car-btn {
@@ -396,24 +384,6 @@
         display: inline-block;
     }
 
-    .input-group {
-        display: flex;
-        gap: 8px;
-    }
-
-    .input-group input {
-        flex: 1;
-    }
-
-    .input-group button {
-        padding: 12px 16px;
-        background: #2563eb;
-        color: white;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-    }
-
     .logout-section {
         text-align: center;
         margin-top: 20px;
@@ -425,6 +395,30 @@
         padding: 10px 20px;
         border: none;
         border-radius: 8px;
+        cursor: pointer;
+    }
+
+    .update-banner {
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        background: #059669;
+        color: white;
+        padding: 12px 20px;
+        text-align: center;
+        z-index: 10001;
+        font-size: 0.9rem;
+    }
+
+    .refresh-btn {
+        background: white;
+        color: #059669;
+        border: none;
+        padding: 4px 12px;
+        border-radius: 4px;
+        margin-left: 10px;
+        font-weight: bold;
         cursor: pointer;
     }
 </style>
@@ -514,15 +508,20 @@
                     </div>
                     <div class="toggle" id="notificationToggle" onclick="toggleNotification()"></div>
                 </div>
-                <div class="setting-item" id="pwaFeatures" style="display: none;">
+                <div class="setting-item">
                     <div>
-                        <div style="font-weight: bold;">PWA 기능</div>
+                        <div style="font-weight: bold;">강제 새로고침</div>
                         <div style="font-size: 0.8rem; color: #6b7280;">
-                            <button onclick="sendTestNotification()" style="
+                            <button onclick="forceRefresh()" style="
                                 background: #10b981; color: white; border: none; 
                                 padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; 
                                 margin-top: 4px; cursor: pointer;
-                            ">테스트 알림</button>
+                            ">데이터 새로고침</button>
+                            <button onclick="clearCache()" style="
+                                background: #ef4444; color: white; border: none; 
+                                padding: 4px 8px; border-radius: 4px; font-size: 0.7rem; 
+                                margin-top: 4px; margin-left: 4px; cursor: pointer;
+                            ">캐시 삭제</button>
                         </div>
                     </div>
                 </div>
@@ -577,6 +576,10 @@
 <!-- 알림 -->
 <div class="notification" id="notification"></div>
 
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
 <script>
     // Firebase 설정
     const firebaseConfig = {
@@ -589,35 +592,40 @@
         appId: "1:439284952071:web:f101098f0c3ccf700f4ea2"
     };
 
-    // Firebase 초기화 시도
+    // 전역 변수
     let database;
     let isOnline = false;
-    
-    // Firebase SDK 로드 확인
+    let cars = [];
+    let currentCarId = null;
+    let notificationEnabled = false;
+    let currentGroup = null;
+    let userNickname = '';
+    let lastDataUpdate = 0;
+    const STORAGE_KEY = 'carParkingApp';
+
+    // Firebase 초기화
     function initFirebase() {
         console.log('🔄 Firebase 초기화 시도...');
-        console.log('Firebase 객체:', typeof firebase);
         
         if (typeof firebase === 'undefined') {
-            console.error('❌ Firebase SDK가 로드되지 않았습니다');
+            console.error('❌ Firebase SDK 로드 실패');
             isOnline = false;
             updateConnectionStatus('offline');
             return;
         }
         
         try {
-            // Firebase 초기화
-            console.log('📡 Firebase 설정:', firebaseConfig);
             firebase.initializeApp(firebaseConfig);
             database = firebase.database();
-            console.log('✅ Firebase 초기화 완료');
             
-            // 데이터베이스 연결 테스트
             database.ref('.info/connected').on('value', (snapshot) => {
                 if (snapshot.val() === true) {
                     console.log('🟢 Firebase 실시간 연결됨');
                     isOnline = true;
                     updateConnectionStatus('online');
+                    if (currentGroup) {
+                        loadGroupData();
+                    }
                 } else {
                     console.log('🟡 Firebase 연결 끊김');
                     isOnline = false;
@@ -628,33 +636,55 @@
             console.log('✅ Firebase 연결 성공!');
             
         } catch (error) {
-            console.error('❌ Firebase 연결 실패:', error.message);
-            console.error('상세 에러:', error);
+            console.error('❌ Firebase 연결 실패:', error);
             isOnline = false;
             updateConnectionStatus('offline');
         }
     }
-    
-    // Firebase SDK가 로드된 후 초기화
-    window.addEventListener('load', () => {
-        setTimeout(initFirebase, 100); // 약간의 딜레이 후 초기화
-    });
-
-    // 로컬 스토리지 키
-    const STORAGE_KEY = 'carParkingApp';
-    
-    // 전역 변수
-    let cars = [];
-    let currentCarId = null;
-    let notificationEnabled = false;
-    let currentGroup = null;
-    let userNickname = '';
 
     // 초기화
     document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(initFirebase, 500);
         checkExistingSession();
         scheduleNotifications();
+        
+        document.addEventListener('visibilitychange', () => {
+            if (!document.hidden && currentGroup && isOnline) {
+                console.log('📱 앱이 포커스됨 - 데이터 새로고침');
+                loadGroupData();
+            }
+        });
     });
+
+    // 강제 새로고침
+    function forceRefresh() {
+        showNotification('새로고침 중...');
+        setTimeout(() => {
+            window.location.reload(true);
+        }, 500);
+    }
+
+    // 캐시 완전 삭제
+    async function clearCache() {
+        if (confirm('모든 캐시를 삭제하고 새로고침하시겠어요?')) {
+            try {
+                const userData = localStorage.getItem(STORAGE_KEY);
+                localStorage.clear();
+                if (userData) {
+                    localStorage.setItem(STORAGE_KEY, userData);
+                }
+                
+                showNotification('캐시가 삭제되었습니다. 새로고침합니다...');
+                setTimeout(() => {
+                    window.location.reload(true);
+                }, 1000);
+                
+            } catch (error) {
+                console.error('캐시 삭제 실패:', error);
+                showNotification('캐시 삭제 실패. 수동으로 새로고침해주세요.', 'error');
+            }
+        }
+    }
 
     // 기존 세션 확인
     function checkExistingSession() {
@@ -668,6 +698,7 @@
                 document.getElementById('notificationToggle').classList.toggle('active', notificationEnabled);
                 
                 showAppSection();
+                
                 if (isOnline) {
                     loadGroupData();
                 } else {
@@ -686,11 +717,9 @@
         if (status === 'online') {
             statusElement.innerHTML = '🟢 실시간 동기화 활성화';
             statusElement.className = 'connection-status status-connected';
-            isOnline = true;
         } else {
             statusElement.innerHTML = '🟡 로컬 모드 (동기화 불가)';
             statusElement.className = 'connection-status status-local';
-            isOnline = false;
         }
     }
 
@@ -730,7 +759,6 @@
 
         if (isOnline) {
             try {
-                // Firebase에 그룹 생성
                 await database.ref(`groups/${groupCode}`).set({
                     password: password,
                     createdAt: Date.now(),
@@ -766,7 +794,6 @@
 
         if (isOnline) {
             try {
-                // Firebase에서 그룹 확인
                 const groupSnapshot = await database.ref(`groups/${code}`).once('value');
                 const groupData = groupSnapshot.val();
 
@@ -780,7 +807,6 @@
                     return;
                 }
 
-                // 그룹에 멤버 추가
                 const userId = generateUserId();
                 await database.ref(`groups/${code}/members/${userId}`).set({
                     nickname: nickname,
@@ -793,8 +819,7 @@
                 return;
             }
         } else {
-            // 로컬 모드에서는 항상 성공
-            showNotification('로컬 모드로 그룹에 참여했습니다', 'error');
+            showNotification('오프라인 모드로 그룹 접속', 'error');
         }
 
         currentGroup = { code: code, password: password };
@@ -812,12 +837,6 @@
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('appSection').style.display = 'block';
         document.getElementById('displayShareCode').textContent = currentGroup.code;
-        
-        if (isOnline) {
-            updateConnectionStatus('online');
-        } else {
-            updateConnectionStatus('offline');
-        }
     }
 
     // 로그인 섹션 표시
@@ -842,13 +861,26 @@
     function loadGroupData() {
         if (!isOnline || !currentGroup) return;
 
+        const now = Date.now();
+        if (now - lastDataUpdate < 1000) {
+            console.log('⏳ 데이터 로드 중복 호출 방지');
+            return;
+        }
+        lastDataUpdate = now;
+
+        console.log('📡 Firebase에서 데이터 로드 중...');
+        
+        database.ref(`groups/${currentGroup.code}/cars`).off();
         database.ref(`groups/${currentGroup.code}/cars`).on('value', (snapshot) => {
             const data = snapshot.val();
             cars = data ? Object.keys(data).map(key => ({
                 id: key,
                 ...data[key]
             })) : [];
+            
+            console.log('📄 데이터 업데이트:', cars.length, '개 차량');
             renderCarList();
+            saveLocalData();
         });
     }
 
@@ -858,7 +890,8 @@
             currentGroup: currentGroup,
             userNickname: userNickname,
             notificationEnabled: notificationEnabled,
-            cars: cars
+            cars: cars,
+            lastSaved: Date.now()
         };
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
@@ -882,10 +915,12 @@
             });
 
             await database.ref(`groups/${currentGroup.code}/cars`).set(carsData);
+            console.log('💾 Firebase 저장 완료');
             saveLocalData();
         } catch (error) {
+            console.error('❌ Firebase 저장 실패:', error);
             showNotification('동기화 실패: ' + error.message, 'error');
-            saveLocalData(); // 로컬에는 저장
+            saveLocalData();
         }
     }
 
@@ -1000,7 +1035,6 @@
         document.getElementById('updateModalTitle').textContent = `${car.name} 주차 위치`;
         document.getElementById('updateLocationModal').style.display = 'block';
         
-        // 기존 위치 정보가 있으면 폼에 미리 채우기
         if (car.location) {
             const [floor, section] = car.location.split(' - ');
             document.getElementById('floor').value = floor || '';
@@ -1049,39 +1083,33 @@
         }
     }
 
-    // 알림 토글 (개선된 PWA 버전)
+    // 알림 토글
     function toggleNotification() {
         notificationEnabled = !notificationEnabled;
         document.getElementById('notificationToggle').classList.toggle('active', notificationEnabled);
         
         if (notificationEnabled) {
-            requestPushNotificationPermission().then((granted) => {
-                if (granted) {
-                    showNotification('스마트 알림이 활성화되었습니다! 📱');
-                    scheduleNotifications();
-                } else {
-                    notificationEnabled = false;
-                    document.getElementById('notificationToggle').classList.remove('active');
-                }
-                saveLocalData();
-            });
+            if ('Notification' in window) {
+                Notification.requestPermission().then((permission) => {
+                    if (permission === 'granted') {
+                        showNotification('스마트 알림이 활성화되었습니다! 📱');
+                        scheduleNotifications();
+                    } else {
+                        notificationEnabled = false;
+                        document.getElementById('notificationToggle').classList.remove('active');
+                        showNotification('알림 권한이 필요합니다', 'error');
+                    }
+                    saveLocalData();
+                });
+            } else {
+                showNotification('이 브라우저는 알림을 지원하지 않습니다', 'error');
+                notificationEnabled = false;
+                document.getElementById('notificationToggle').classList.remove('active');
+            }
         } else {
             showNotification('알림이 비활성화되었습니다');
-            saveLocalData();
         }
-    }
-
-    // 나머지 함수들은 이전과 동일...
-    function checkNotificationPermission() {
-        // PWA 환경에서는 더 적극적으로 권한 요청
-        if ('Notification' in window && 'serviceWorker' in navigator) {
-            return true;
-        }
-        return false;
-    }
-
-    function requestNotificationPermission() {
-        return requestPushNotificationPermission();
+        saveLocalData();
     }
 
     function scheduleNotifications() {
@@ -1089,7 +1117,7 @@
 
         const now = new Date();
         const scheduledTime = new Date();
-        scheduledTime.setHours(21, 0, 0, 0); // 오후 9시
+        scheduledTime.setHours(21, 0, 0, 0);
 
         if (now > scheduledTime) {
             scheduledTime.setDate(scheduledTime.getDate() + 1);
@@ -1098,33 +1126,14 @@
         const timeUntilNotification = scheduledTime - now;
 
         setTimeout(() => {
-            if (notificationEnabled) {
-                // PWA 설치된 경우 더 풍부한 알림
-                if (window.matchMedia('(display-mode: standalone)').matches || isInstalled) {
-                    new Notification('🚗 주차 위치 업데이트 알림', {
-                        body: '오늘 주차한 위치를 업데이트해주세요!',
-                        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#2563eb"/><text y="60" font-size="60" text-anchor="middle" x="50" fill="white">🚗</text></svg>',
-                        badge: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#2563eb"/><text y="60" font-size="60" text-anchor="middle" x="50" fill="white">🚗</text></svg>',
-                        vibrate: [200, 100, 200],
-                        tag: 'parking-reminder',
-                        requireInteraction: true, // 사용자가 직접 닫을 때까지 표시
-                        actions: [
-                            {
-                                action: 'update',
-                                title: '위치 업데이트',
-                                icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>'
-                            }
-                        ]
-                    });
-                } else if (Notification.permission === 'granted') {
-                    new Notification('🚗 우리집 차 어디있지?', {
-                        body: '오늘 주차한 위치를 업데이트해주세요!',
-                        icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="#2563eb"/><text y="60" font-size="60" text-anchor="middle" x="50" fill="white">🚗</text></svg>'
-                    });
-                }
+            if (notificationEnabled && Notification.permission === 'granted') {
+                new Notification('🚗 주차 위치 업데이트 알림', {
+                    body: '오늘 주차한 위치를 업데이트해주세요!',
+                    vibrate: [200, 100, 200],
+                    tag: 'parking-reminder'
+                });
             }
             
-            // 다음 날 알림 스케줄
             setTimeout(scheduleNotifications, 24 * 60 * 60 * 1000);
         }, timeUntilNotification);
     }
